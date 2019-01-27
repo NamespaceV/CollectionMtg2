@@ -1,4 +1,4 @@
-﻿namespace CollectionMtg2.DeckboxApi
+﻿namespace CollectionMtg2.Deckbox
 {
     using CollectionMtg2.DomainModel;
     using System.IO;
@@ -6,7 +6,7 @@
     using CsvHelper;
     using CsvHelper.Configuration;
 
-    class DeckboxApiClient
+    class DeckboxExportParser
     {
         public sealed class DeckboxCardRowMap : ClassMap<DeckboxCardRow>
         {
@@ -55,9 +55,13 @@
             {
                 var csv = new CsvReader(fileReader);
                 csv.Configuration.RegisterClassMap<DeckboxCardRowMap>();
-                var records = csv.GetRecords<DeckboxCardRow>();
-                foreach (var record in records)
+                csv.Configuration.Delimiter = ",";
+
+                await csv.ReadAsync();
+                csv.ReadHeader();
+                while (await csv.ReadAsync())
                 {
+                    var record = csv.GetRecord<DeckboxCardRow>();
                     if (record.Edition != setFilter)
                     {
                         continue;

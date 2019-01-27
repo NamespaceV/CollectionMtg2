@@ -2,7 +2,7 @@
 {
     using CollectionMtg2.CollectionDiff;
     using CollectionMtg2.Commands;
-    using CollectionMtg2.DeckboxApi;
+    using CollectionMtg2.Deckbox;
     using CollectionMtg2.ScryfallApi;
     using System;
     using System.ComponentModel;
@@ -29,14 +29,14 @@
         public ICommand LoadSetCommand { get; }
         public ICommand CompareCommand { get; }
 
-        private readonly DeckboxApiClient _deckboxParser;
+        private readonly DeckboxExportParser _deckboxParser;
         private readonly ScryfallApiClient _scryfallApiClient;
         private readonly CollectionComparer _collectionComparer;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public MainWindowViewModel(
-            DeckboxApiClient deckboxParser,
+            DeckboxExportParser deckboxParser,
             ScryfallApiClient scryfallApiClient,
             CollectionComparer collectionComparer)
         {
