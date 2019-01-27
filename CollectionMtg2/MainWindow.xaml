@@ -7,15 +7,15 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <TextBox x:Name="SetTextBox" HorizontalAlignment="Left" Height="24"     Margin="10,10,0,0" TextWrapping="Wrap" Text="M19" VerticalAlignment="Top" Width="120"/>
-        <Button Content="Get Set Cards" HorizontalAlignment="Left" Height="24"  Margin="135,10,0,0" VerticalAlignment="Top" Width="102" Click="Button_Click" />
-        <TextBox x:Name="NoLimitTextBox" HorizontalAlignment="Left" Height="24" Margin="242,10,0,0" TextWrapping="Wrap" Text="9999" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="OutputTextBox" Margin="10,113,10,10" TextWrapping="Wrap" Text="..." HorizontalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True" VerticalScrollBarVisibility="Auto"/>
-        <Button Content="Read collection" HorizontalAlignment="Left" Height="24"  Margin="10,42,0,0" VerticalAlignment="Top" Width="120" Click="Button2_Click" />
-        <TextBox x:Name="CollectionPathTextBox" Height="24" Margin="298,42,10,0" TextWrapping="Wrap" Text="F:\ProjectMtg2\collectionBackups\Inventory_1421686397875289_2018.August.18.csv" VerticalAlignment="Top"/>
-        <TextBox x:Name="CollectionSetFilterTextBox" HorizontalAlignment="Left" Height="24" Margin="135,42,0,0" TextWrapping="Wrap" Text="Core Set 2019" VerticalAlignment="Top" Width="158"/>
-        <Button Content="Missing List" HorizontalAlignment="Left" Height="24"  Margin="10,71,0,0" VerticalAlignment="Top" Width="120" Click="Button3_Click" />
-        <TextBox x:Name="ListPathTextBox" Height="24" Margin="202,71,10,0" TextWrapping="Wrap" Text="F:\ProjectMtg2\setLists\m19.txt" VerticalAlignment="Top"/>
-        <CheckBox  x:Name="PlaysetsCheckbox" Content="Playsets" HorizontalAlignment="Left" Margin="135,76,0,0" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Height="24" Margin="10,10,0,0" VerticalAlignment="Top" Width="120" Text="{Binding Path=SetName}"/>
+        <Button Content="Get Set Cards" HorizontalAlignment="Left" Height="24"  Margin="135,10,0,0" VerticalAlignment="Top" Width="102" Command="{Binding Path=LoadSetCommand}" />
+        <TextBox HorizontalAlignment="Left" Height="24" Margin="242,10,0,0" TextWrapping="Wrap" Text="{Binding Path=MaxCardInSet}" VerticalAlignment="Top" Width="120"/>
+        <TextBox Margin="10,113,10,10" TextWrapping="Wrap" Text="{Binding Path=OutputText}" HorizontalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True" VerticalScrollBarVisibility="Auto"/>
+        <Button Content="Read collection" HorizontalAlignment="Left" Height="24"  Margin="10,42,0,0" VerticalAlignment="Top" Width="120" Command="{Binding Path=LoadCollectionCommand}" />
+        <TextBox Height="24" Margin="298,42,10,0" TextWrapping="Wrap" Text="{Binding Path=CollectionPath}" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Height="24" Margin="135,42,0,0" TextWrapping="Wrap" Text="{Binding Path=CollectionSetFilter}" VerticalAlignment="Top" Width="158"/>
+        <Button Content="Compare" HorizontalAlignment="Left" Height="24"  Margin="10,71,0,0" VerticalAlignment="Top" Width="120" Command="{Binding Path=CompareCommand}" />
+        <TextBox Height="24" Margin="202,71,10,0" TextWrapping="Wrap" Text="{Binding Path=CardListPath}"  VerticalAlignment="Top"/>
+        <CheckBox Content="Playsets" HorizontalAlignment="Left" Margin="135,76,0,0" VerticalAlignment="Top" IsChecked="{Binding Path=WantPlaysets}"/>
     </Grid>
 </Window>
