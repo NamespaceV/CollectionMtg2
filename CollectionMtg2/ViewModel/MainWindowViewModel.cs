@@ -3,17 +3,24 @@
     using CollectionMtg2.CollectionDiff;
     using CollectionMtg2.Commands;
     using CollectionMtg2.Deckbox;
+    using CollectionMtg2.DomainModel;
     using CollectionMtg2.ScryfallApi;
     using System;
+    using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
     using System.Windows.Input;
+    using static CollectionMtg2.DomainModel.CardCollection;
 
     class MainWindowViewModel : INotifyPropertyChanged
     {
         private string _outputText;
         public string OutputText { get => _outputText; set { _outputText = value; OnPropertyChanged(); } }
+
+        public ObservableCollection<Position> CardsList { get; set; } = new ObservableCollection<Position>();
+        private Position _selectedCard;
+        public Position SelectedCard { get => _selectedCard; set { _selectedCard = value; OnPropertyChanged(); } }
 
         public string SetName { get; set; }
         public string MaxCardInSet { get; set; }
@@ -24,6 +31,8 @@
         public string CardListPath { get; set; }
 
         public bool WantPlaysets { get; set; }
+
+        public string DisplayedImagePath { get; set; }
 
         public ICommand LoadCollectionCommand { get; }
         public ICommand LoadSetCommand { get; }
@@ -53,7 +62,7 @@
             CollectionPath = @"F:\ProjectMtg2\collectionBackups\Inventory_1421686397875289_2019.January.27.csv";
             CollectionSetFilter = "Guilds of Ravnica";
             CardListPath = @"F:\ProjectMtg2\setLists\grn.txt";
-
+            DisplayedImagePath = @"https://img.scryfall.com/cards/large/en/gtc/193.jpg?1517813031";
         }
 
         private async Task LoadSet()
@@ -61,21 +70,25 @@
             OutputText = "Getting Set...";
             var cards = await _scryfallApiClient.GetCardsFromSet(SetName, int.Parse(MaxCardInSet));
             OutputText = "";
+            CardsList.Clear();
             foreach (var card in cards)
             {
-                OutputText += card.CardName + Environment.NewLine;
+                var pos = new Position() { CardType = card, CardCount = 0 };
+                CardsList.Add(pos);
             }
-
         }
 
         private async Task LoadCollection()
         {
             OutputText = "Loading collection...";
-            var collction = await _deckboxParser.ReadCollectionCsv(CollectionPath, CollectionSetFilter);
+            var collection = await _deckboxParser.ReadCollectionCsv(CollectionPath, CollectionSetFilter);
+            await _scryfallApiClient.LinkImages(collection);
+            //SelectedCard = new Position() { CardType = new Card() { CardName = "dasdas" }, CardCount = 5 };
             OutputText = "";
-            foreach (var cardPosition in collction.cardPositions)
+            CardsList.Clear();
+            foreach (var cardPosition in collection.cardPositions)
             {
-                OutputText += cardPosition.CardCount + " " + cardPosition.CardType.CardName + Environment.NewLine;
+                CardsList.Add(cardPosition);
             }
 
         }
@@ -85,10 +98,12 @@
             OutputText = "Comparing...";
             var collection = await _deckboxParser.ReadCollectionCsv(CollectionPath, CollectionSetFilter);
             var missing = await _collectionComparer.GetMissingCards(collection, CardListPath, WantPlaysets);
+            await _scryfallApiClient.LinkImages(missing);
             OutputText = "";
+            CardsList.Clear();
             foreach (var cardPosition in missing.cardPositions)
             {
-                OutputText += cardPosition.CardCount + " " + cardPosition.CardType.CardName + Environment.NewLine;
+                CardsList.Add(cardPosition);
             }
         }
 

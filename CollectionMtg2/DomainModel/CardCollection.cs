@@ -9,6 +9,8 @@
         {
             public Card CardType;
             public int CardCount;
+            public string DisplayName => CardCount + " " + CardType.CardName;
+            public string DisplayImage => CardType.DisplayImage;
         }
         public List<Position> cardPositions = new List<Position>();
 

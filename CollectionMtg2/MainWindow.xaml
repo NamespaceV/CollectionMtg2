@@ -5,17 +5,29 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CollectionMtg2"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="632.85" Width="800">
     <Grid>
         <TextBox HorizontalAlignment="Left" Height="24" Margin="10,10,0,0" VerticalAlignment="Top" Width="120" Text="{Binding Path=SetName}"/>
         <Button Content="Get Set Cards" HorizontalAlignment="Left" Height="24"  Margin="135,10,0,0" VerticalAlignment="Top" Width="102" Command="{Binding Path=LoadSetCommand}" />
         <TextBox HorizontalAlignment="Left" Height="24" Margin="242,10,0,0" TextWrapping="Wrap" Text="{Binding Path=MaxCardInSet}" VerticalAlignment="Top" Width="120"/>
-        <TextBox Margin="10,113,10,10" TextWrapping="Wrap" Text="{Binding Path=OutputText}" HorizontalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True" VerticalScrollBarVisibility="Auto"/>
         <Button Content="Read collection" HorizontalAlignment="Left" Height="24"  Margin="10,42,0,0" VerticalAlignment="Top" Width="120" Command="{Binding Path=LoadCollectionCommand}" />
         <TextBox Height="24" Margin="298,42,10,0" TextWrapping="Wrap" Text="{Binding Path=CollectionPath}" VerticalAlignment="Top"/>
         <TextBox HorizontalAlignment="Left" Height="24" Margin="135,42,0,0" TextWrapping="Wrap" Text="{Binding Path=CollectionSetFilter}" VerticalAlignment="Top" Width="158"/>
         <Button Content="Compare" HorizontalAlignment="Left" Height="24"  Margin="10,71,0,0" VerticalAlignment="Top" Width="120" Command="{Binding Path=CompareCommand}" />
         <TextBox Height="24" Margin="202,71,10,0" TextWrapping="Wrap" Text="{Binding Path=CardListPath}"  VerticalAlignment="Top"/>
         <CheckBox Content="Playsets" HorizontalAlignment="Left" Margin="135,76,0,0" VerticalAlignment="Top" IsChecked="{Binding Path=WantPlaysets}"/>
+        <ListBox Margin="10,113,264,10"  ItemsSource="{Binding CardsList}" SelectedItem="{Binding SelectedCard}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding DisplayName}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <StackPanel Margin="0,113,10,10" HorizontalAlignment="Right" Width="249">
+            <Label Content="{Binding SelectedCard.DisplayName}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <Image Source="{Binding SelectedCard.DisplayImage}" HorizontalAlignment="Left" Width="249" Height="312" />
+        </StackPanel>
     </Grid>
 </Window>

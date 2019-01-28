@@ -3,5 +3,6 @@
     class Card
     {
         public string CardName;
+        public string DisplayImage;
     }
 }
