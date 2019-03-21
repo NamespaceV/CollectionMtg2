@@ -3,13 +3,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:CollectionMtg2"
+        xmlns:local="clr-namespace:CollectionMtg2.ViewModel"
+        d:DataContext="{d:DesignInstance local:MainWindowViewModel, IsDesignTimeCreatable=True}"
         mc:Ignorable="d"
         Title="MainWindow" Height="632.85" Width="800">
     <Grid>
         <TextBox HorizontalAlignment="Left" Height="24" Margin="10,10,0,0" VerticalAlignment="Top" Width="120" Text="{Binding Path=SetName}"/>
         <Button Content="Get Set Cards" HorizontalAlignment="Left" Height="24"  Margin="135,10,0,0" VerticalAlignment="Top" Width="102" Command="{Binding Path=LoadSetCommand}" />
         <TextBox HorizontalAlignment="Left" Height="24" Margin="242,10,0,0" TextWrapping="Wrap" Text="{Binding Path=MaxCardInSet}" VerticalAlignment="Top" Width="120"/>
+        <Button Content="Save Set file" HorizontalAlignment="Left" Height="24"  Margin="367,10,0,0" VerticalAlignment="Top" Width="102" Command="{Binding Path=SaveSetCommand}" />
         <Button Content="Read collection" HorizontalAlignment="Left" Height="24"  Margin="10,42,0,0" VerticalAlignment="Top" Width="120" Command="{Binding Path=LoadCollectionCommand}" />
         <TextBox Height="24" Margin="298,42,10,0" TextWrapping="Wrap" Text="{Binding Path=CollectionPath}" VerticalAlignment="Top"/>
         <TextBox HorizontalAlignment="Left" Height="24" Margin="135,42,0,0" TextWrapping="Wrap" Text="{Binding Path=CollectionSetFilter}" VerticalAlignment="Top" Width="158"/>

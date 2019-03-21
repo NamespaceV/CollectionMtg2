@@ -8,6 +8,7 @@
     using System;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
+    using System.IO;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
     using System.Windows.Input;
@@ -36,6 +37,7 @@
 
         public ICommand LoadCollectionCommand { get; }
         public ICommand LoadSetCommand { get; }
+        public ICommand SaveSetCommand { get; }
         public ICommand CompareCommand { get; }
 
         private readonly DeckboxExportParser _deckboxParser;
@@ -55,13 +57,14 @@
 
             LoadCollectionCommand = new BaseCommand(LoadCollection);
             LoadSetCommand = new BaseCommand(LoadSet);
+            SaveSetCommand = new BaseCommand(SaveSet);
             CompareCommand = new BaseCommand(CompareCollectionWithSet);
 
-            SetName = "GRN";
+            SetName = "RNA";
             MaxCardInSet = "9999";
-            CollectionPath = @"F:\ProjectMtg2\collectionBackups\Inventory_1421686397875289_2019.January.27.csv";
-            CollectionSetFilter = "Guilds of Ravnica";
-            CardListPath = @"F:\ProjectMtg2\setLists\grn.txt";
+            CollectionPath = @"F:\ProjectMtg2\collectionBackups\Inventory_1421686397875289_2019.March.21.csv";
+            CollectionSetFilter = "Ravnica Allegiance";
+            CardListPath = @"F:\ProjectMtg2\setLists\rna.txt";
             DisplayedImagePath = @"https://img.scryfall.com/cards/large/en/gtc/193.jpg?1517813031";
         }
 
@@ -78,6 +81,22 @@
             }
         }
 
+        private async Task SaveSet()
+        {
+            OutputText = "Getting Set...";
+            var cards = await _scryfallApiClient.GetCardsFromSet(SetName, int.Parse(MaxCardInSet));
+            OutputText = "";
+            CardsList.Clear();
+            using (var writer = new StreamWriter(File.Open(CardListPath, FileMode.OpenOrCreate)))
+            foreach (var card in cards)
+            {
+                var pos = new Position() { CardType = card, CardCount = 0 };
+                CardsList.Add(pos);
+                await writer.WriteLineAsync(card.CardName);
+            }
+        }
+
+
         private async Task LoadCollection()
         {
             OutputText = "Loading collection...";
@@ -90,7 +109,6 @@
             {
                 CardsList.Add(cardPosition);
             }
-
         }
 
         private async Task CompareCollectionWithSet()
