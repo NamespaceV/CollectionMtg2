@@ -26,7 +26,19 @@
         public string SetName { get; set; }
         public string MaxCardInSet { get; set; }
 
-        public string CollectionPath { get; set; }
+        private string _collectionPath;
+        public string CollectionPath {
+            get {
+                return _collectionPath;
+            }
+            set
+            {
+                _collectionPath = value;
+                Properties.Settings.Default.CardCollectionFileName = value;
+                Properties.Settings.Default.Save();
+                OnPropertyChanged();
+            }
+        }
         public string CollectionSetFilter { get; set; }
 
         public string CardListPath { get; set; }
@@ -62,7 +74,7 @@
 
             SetName = "RNA";
             MaxCardInSet = "9999";
-            CollectionPath = @"F:\ProjectMtg2\collectionBackups\Inventory_1421686397875289_2019.March.21.csv";
+            CollectionPath = Properties.Settings.Default.CardCollectionFileName;
             CollectionSetFilter = "Ravnica Allegiance";
             CardListPath = @"F:\ProjectMtg2\setLists\rna.txt";
             DisplayedImagePath = @"https://img.scryfall.com/cards/large/en/gtc/193.jpg?1517813031";
