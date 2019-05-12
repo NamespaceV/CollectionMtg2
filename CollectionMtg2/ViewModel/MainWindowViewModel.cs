@@ -3,7 +3,6 @@
     using CollectionMtg2.CollectionDiff;
     using CollectionMtg2.Commands;
     using CollectionMtg2.Deckbox;
-    using CollectionMtg2.DomainModel;
     using CollectionMtg2.ScryfallApi;
     using System;
     using System.Collections.ObjectModel;
@@ -14,7 +13,7 @@
     using System.Windows.Input;
     using static CollectionMtg2.DomainModel.CardCollection;
 
-    class MainWindowViewModel : INotifyPropertyChanged
+    public class MainWindowViewModel : INotifyPropertyChanged
     {
         private string _outputText;
         public string OutputText { get => _outputText; set { _outputText = value; OnPropertyChanged(); } }

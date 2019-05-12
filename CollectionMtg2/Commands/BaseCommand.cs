@@ -36,7 +36,14 @@
 
         public async void Execute(object parameter)
         {
-            await ExecuteAsync();
+            try
+            {
+                await ExecuteAsync();
+            }
+            catch
+            {
+
+            }
         }
 
         public Task ExecuteAsync() {

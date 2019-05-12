@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    class CardCollection
+    public class CardCollection
     {
         public class Position
         {

@@ -8,7 +8,7 @@
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
 
-    class ScryfallApiClient
+    public class ScryfallApiClient
     {
         private readonly HttpClient _httpClient;
 

@@ -4,7 +4,7 @@
     using System.IO;
     using System.Threading.Tasks;
 
-    class CollectionComparer
+    public class CollectionComparer
     {
         public async Task<CardCollection> GetMissingCards(CardCollection collection, string setListPath, bool playsets)
         {

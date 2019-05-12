@@ -6,7 +6,7 @@
     using CsvHelper;
     using CsvHelper.Configuration;
 
-    class DeckboxExportParser
+    public class DeckboxExportParser
     {
         public sealed class DeckboxCardRowMap : ClassMap<DeckboxCardRow>
         {

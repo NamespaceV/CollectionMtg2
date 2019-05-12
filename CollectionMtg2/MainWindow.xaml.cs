@@ -2,14 +2,13 @@
 {
     using CollectionMtg2.ViewModel;
     using System.Windows;
-    using Unity;
 
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public MainWindow(MainWindowViewModel mainWindowViewModel)
         {
             InitializeComponent();
-            DataContext = Configuration.GetContainer().Resolve<MainWindowViewModel>();
+            DataContext = mainWindowViewModel;
         }
 
     }
