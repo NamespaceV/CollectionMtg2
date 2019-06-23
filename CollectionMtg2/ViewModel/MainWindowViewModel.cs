@@ -4,12 +4,15 @@
     using CollectionMtg2.Commands;
     using CollectionMtg2.Deckbox;
     using CollectionMtg2.ScryfallApi;
+    using Microsoft.Win32;
     using System;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.IO;
+    using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
+    using System.Windows;
     using System.Windows.Input;
     using static CollectionMtg2.DomainModel.CardCollection;
 
@@ -46,10 +49,15 @@
 
         public string DisplayedImagePath { get; set; }
 
+        public ICommand OpenCollectionCommand { get; }
         public ICommand LoadCollectionCommand { get; }
+
+        public ICommand OpenSetCommand { get; }
         public ICommand LoadSetCommand { get; }
         public ICommand SaveSetCommand { get; }
         public ICommand CompareCommand { get; }
+
+        public ICommand CopyToClipboardCommand { get; }
 
         private readonly DeckboxExportParser _deckboxParser;
         private readonly ScryfallApiClient _scryfallApiClient;
@@ -66,10 +74,14 @@
             _scryfallApiClient = scryfallApiClient;
             _collectionComparer = collectionComparer;
 
+            OpenCollectionCommand = new BaseCommand(OpenCollection);
             LoadCollectionCommand = new BaseCommand(LoadCollection);
+            OpenSetCommand = new BaseCommand(OpenSet);
             LoadSetCommand = new BaseCommand(LoadSet);
             SaveSetCommand = new BaseCommand(SaveSet);
             CompareCommand = new BaseCommand(CompareCollectionWithSet);
+
+            CopyToClipboardCommand = new BaseCommand(CopyToClipboard);
 
             SetName = "RNA";
             MaxCardInSet = "9999";
@@ -77,6 +89,26 @@
             CollectionSetFilter = "Ravnica Allegiance";
             CardListPath = @"F:\ProjectMtg2\setLists\rna.txt";
             DisplayedImagePath = @"https://img.scryfall.com/cards/large/en/gtc/193.jpg?1517813031";
+        }
+
+        private Task CopyToClipboard()
+        {
+            var text = string.Join("\n", CardsList.Select(c => c.CardCount + " " + c.CardType.CardName));
+            Clipboard.SetText(text);
+            return Task.CompletedTask;
+        }
+
+        private Task OpenSet()
+        {
+            var openFileDialog = new OpenFileDialog()
+            {
+                InitialDirectory = Path.GetDirectoryName(CardListPath)
+            };
+            if (openFileDialog.ShowDialog() == true)
+            {
+                CardListPath = openFileDialog.FileName;
+            }
+            return Task.CompletedTask;
         }
 
         private async Task LoadSet()
@@ -107,6 +139,18 @@
             }
         }
 
+        private Task OpenCollection()
+        {
+            var openFileDialog = new OpenFileDialog()
+            {
+                InitialDirectory = Path.GetDirectoryName(CollectionPath)
+            };
+            if (openFileDialog.ShowDialog() == true)
+            {
+                CollectionPath = openFileDialog.FileName;
+            }
+            return Task.CompletedTask;
+        }
 
         private async Task LoadCollection()
         {
