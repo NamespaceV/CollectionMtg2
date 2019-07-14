@@ -6,26 +6,28 @@
         xmlns:local="clr-namespace:CollectionMtg2.ViewModel"
         d:DataContext="{d:DesignInstance local:MainWindowViewModel, IsDesignTimeCreatable=False}"
         mc:Ignorable="d"
-        Title="MainWindow" Height="632.85" Width="800">
+        Title="{Binding Path=WindowTitle}" Height="632.85" Width="800">
     <Grid>
         <DockPanel>
             <DockPanel DockPanel.Dock="Top">
-                <TextBox HorizontalAlignment="Left" Height="24" Margin="10,10,0,0" VerticalAlignment="Top" Width="120" Text="{Binding Path=SetName}"/>
-                <Button Content="Get Set Cards" HorizontalAlignment="Left" Height="24"  Margin="10,10,0,0" VerticalAlignment="Top" Width="102" Command="{Binding Path=LoadSetCommand}" />
-                <TextBox HorizontalAlignment="Left" Height="24" Margin="10,10,0,0" TextWrapping="Wrap" Text="{Binding Path=MaxCardInSet}" VerticalAlignment="Top" Width="120"/>
-                <Button Content="Save Set file" HorizontalAlignment="Left" Height="24"  Margin="10,10,0,0" VerticalAlignment="Top" Width="102" Command="{Binding Path=SaveSetCommand}" />
+                <Button Content="📂" HorizontalAlignment="Left" Height="24"  Margin="10,10,0,0" VerticalAlignment="Top" Width="45" Command="{Binding Path=OpenCollectionCommand}" />
+                <TextBox Height="24" Margin="0,10,10,0" TextWrapping="NoWrap" Text="{Binding Path=CollectionPath}" />
             </DockPanel>
             <DockPanel DockPanel.Dock="Top">
-                <Button Content="Read collection" HorizontalAlignment="Left" Height="24"  Margin="10,10,0,0" VerticalAlignment="Top" Width="120" Command="{Binding Path=LoadCollectionCommand}" />
-                <Button Content="Open" HorizontalAlignment="Left" Height="24"  Margin="10,10,0,0" VerticalAlignment="Top" Width="45" Command="{Binding Path=OpenCollectionCommand}" />
-                <TextBox Height="24" Margin="10,10,78,0" TextWrapping="Wrap" Text="{Binding Path=CollectionPath}" VerticalAlignment="Top"/>
+                <Button Content="📂" HorizontalAlignment="Left" Height="24"  Margin="10,10,0,0" VerticalAlignment="Top" Width="45" Command="{Binding Path=OpenSetCommand}" />
+                <TextBox Height="24" Margin="0,10,10,0" TextWrapping="NoWrap" Text="{Binding Path=CardListPath}"  VerticalAlignment="Top" />
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Top">
+                <TextBox HorizontalAlignment="Left" Height="24" Margin="10,10,0,0" VerticalAlignment="Top" Width="135" Text="{Binding Path=SetName}"/>
+                <TextBox HorizontalAlignment="Left" Height="24" Margin="10,10,0,0" TextWrapping="Wrap" Text="{Binding Path=MaxCardInSet}" VerticalAlignment="Top" Width="130"/>
+                <Button Content="Get Cards Form Set" HorizontalAlignment="Left" Height="24"  Margin="10,10,0,0" VerticalAlignment="Top" Width="120" Command="{Binding Path=LoadSetCommand}" />
+                <Button Content="Save Card list as Set file" HorizontalAlignment="Left" Height="24"  Margin="10,10,0,0" VerticalAlignment="Top" Width="152" Command="{Binding Path=SaveSetCommand}" />
             </DockPanel>
             <DockPanel DockPanel.Dock="Top">
                 <TextBox HorizontalAlignment="Left" Height="24" Margin="10,10,0,0" TextWrapping="Wrap" Text="{Binding Path=CollectionSetFilter}" VerticalAlignment="Top" Width="158"/>
-                <Button Content="Compare" HorizontalAlignment="Left" Height="24"  Margin="10,10,0,0" VerticalAlignment="Top" Width="120" Command="{Binding Path=CompareCommand}" />
-                <Button Content="Open" HorizontalAlignment="Left" Height="24"  Margin="10,10,0,0" VerticalAlignment="Top" Width="45" Command="{Binding Path=OpenSetCommand}" />
-                <TextBox Height="24" Margin="10,10,10,0" TextWrapping="Wrap" Text="{Binding Path=CardListPath}"  VerticalAlignment="Top" Width="278"/>
-                <CheckBox Content="Playsets" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" IsChecked="{Binding Path=WantPlaysets}"/>
+                <Button Content="Show collection" Height="24"  Margin="10,10,10,0" Width="120" Command="{Binding Path=LoadCollectionCommand}" />
+                <Button Content="Find missing" HorizontalAlignment="Left" Height="24"  Margin="10,10,0,0" VerticalAlignment="Top" Width="120" Command="{Binding Path=CompareCommand}" />
+                <CheckBox Content="Playsets" HorizontalAlignment="Left" Margin="10,15,0,0" VerticalAlignment="Top" IsChecked="{Binding Path=WantPlaysets}"/>
             </DockPanel>
             <DockPanel>
                 <DockPanel DockPanel.Dock="Right">
@@ -35,7 +37,7 @@
                     </StackPanel>
                 </DockPanel>
                 <DockPanel>
-                    <DockPanel DockPanel.Dock="top">
+                    <DockPanel DockPanel.Dock="bottom">
                         <Button Content="Copy to clipboard" HorizontalAlignment="Left" Height="24"  Margin="10,10,0,0" VerticalAlignment="Top" Width="112" Command="{Binding Path=CopyToClipboardCommand}" />
                     </DockPanel>
                     <ListBox Margin="10,10,10,10"  ItemsSource="{Binding CardsList}" SelectedItem="{Binding SelectedCard}">
