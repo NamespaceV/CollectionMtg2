@@ -8,50 +8,69 @@
         mc:Ignorable="d"
         Title="{Binding Path=WindowTitle}" Height="632.85" Width="800">
     <Grid>
-        <DockPanel>
-            <DockPanel DockPanel.Dock="Top">
-                <Button Content="📂" HorizontalAlignment="Left" Height="24"  Margin="10,10,0,0" VerticalAlignment="Top" Width="45" Command="{Binding Path=OpenCollectionCommand}" />
-                <TextBox Height="24" Margin="0,10,10,0" TextWrapping="NoWrap" Text="{Binding Path=CollectionPath}" />
-            </DockPanel>
-            <DockPanel DockPanel.Dock="Top">
-                <Button Content="📂" HorizontalAlignment="Left" Height="24"  Margin="10,10,0,0" VerticalAlignment="Top" Width="45" Command="{Binding Path=OpenSetCommand}" />
-                <TextBox Height="24" Margin="0,10,10,0" TextWrapping="NoWrap" Text="{Binding Path=CardListPath}"  VerticalAlignment="Top" />
-            </DockPanel>
-            <DockPanel DockPanel.Dock="Top">
-                <TextBox HorizontalAlignment="Left" Height="24" Margin="10,10,0,0" VerticalAlignment="Top" Width="135" Text="{Binding Path=SetName}"/>
-                <TextBox HorizontalAlignment="Left" Height="24" Margin="10,10,0,0" TextWrapping="Wrap" Text="{Binding Path=MaxCardInSet}" VerticalAlignment="Top" Width="130"/>
-                <Button Content="Get Cards Form Set" HorizontalAlignment="Left" Height="24"  Margin="10,10,0,0" VerticalAlignment="Top" Width="120" Command="{Binding Path=LoadSetCommand}" />
-                <Button Content="Save Card list as Set file" HorizontalAlignment="Left" Height="24"  Margin="10,10,0,0" VerticalAlignment="Top" Width="152" Command="{Binding Path=SaveSetCommand}" />
-            </DockPanel>
-            <DockPanel DockPanel.Dock="Top">
-                <TextBox HorizontalAlignment="Left" Height="24" Margin="10,10,0,0" TextWrapping="Wrap" Text="{Binding Path=CollectionSetFilter}" VerticalAlignment="Top" Width="158"/>
-                <Button Content="Show collection" Height="24"  Margin="10,10,10,0" Width="120" Command="{Binding Path=LoadCollectionCommand}" />
-                <Button Content="Find missing" HorizontalAlignment="Left" Height="24"  Margin="10,10,0,0" VerticalAlignment="Top" Width="120" Command="{Binding Path=CompareCommand}" />
-                <CheckBox Content="Playsets" HorizontalAlignment="Left" Margin="10,15,0,0" VerticalAlignment="Top" IsChecked="{Binding Path=WantPlaysets}"/>
-            </DockPanel>
-            <DockPanel>
-                <DockPanel DockPanel.Dock="Right">
-                    <StackPanel Margin="10,10,10,10" HorizontalAlignment="Right" Width="249">
-                        <Label Content="{Binding SelectedCard.DisplayName}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                        <Image Source="{Binding SelectedCard.DisplayImage}" HorizontalAlignment="Left" Width="249" Height="312" />
-                    </StackPanel>
-                </DockPanel>
+        <TabControl>
+            <TabItem Header="Main">
                 <DockPanel>
-                    <DockPanel DockPanel.Dock="bottom">
-                        <Button Content="Copy to clipboard" HorizontalAlignment="Left" Height="24"  Margin="10,10,0,0" VerticalAlignment="Top" Width="112" Command="{Binding Path=CopyToClipboardCommand}" />
+                    <Separator DockPanel.Dock="Top" Height="2" Background="Transparent"/>
+                    <DockPanel DockPanel.Dock="Top">
+                        <Label>Set: </Label>
+                        <TextBox Width="150" Text="{Binding Path=SetName}"/>
+                        <Label>Max Card:</Label>
+                        <TextBox Width="130" Text="{Binding Path=MaxCardInSet}"/>
+                        <Separator Width="10" Background="Transparent"/>
+                        <Button Content="Get Cards Form Set" HorizontalAlignment="Left" Height="24"  VerticalAlignment="Top" Width="120" Command="{Binding Path=LoadSetCommand}" />
+                        <Separator Width="10" Background="Transparent"/>
+                        <Button Content="Save Card list as Set file" HorizontalAlignment="Left" Height="24" VerticalAlignment="Top" Width="152" Command="{Binding Path=SaveSetCommand}" />
                     </DockPanel>
-                    <ListBox Margin="10,10,10,10"  ItemsSource="{Binding CardsList}" SelectedItem="{Binding SelectedCard}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding DisplayName}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                    <Separator DockPanel.Dock="Top" Height="2" Background="Transparent"/>
+                    <DockPanel DockPanel.Dock="Top">
+                        <Label>Collection Expansion filter:</Label>
+                        <TextBox Width="160" Text="{Binding Path=CollectionSetFilter}"/>
+                        <Separator Width="10" Background="Transparent"/>
+                        <Button Content="Show collection" Width="120" Command="{Binding Path=LoadCollectionCommand}" />
+                        <Separator Width="10" Background="Transparent"/>
+                        <Button Content="Find missing"  Width="120" Command="{Binding Path=CompareCommand}" />
+                        <CheckBox Content="Playsets"  IsChecked="{Binding Path=WantPlaysets}"/>
+                    </DockPanel>
+                    <DockPanel>
+                        <DockPanel DockPanel.Dock="Right">
+                            <StackPanel Margin="10,10,10,10" HorizontalAlignment="Right" Width="249">
+                                <Label Content="{Binding SelectedCard.DisplayName}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <Image Source="{Binding SelectedCard.DisplayImage}" HorizontalAlignment="Left" Width="249" Height="312" />
+                            </StackPanel>
+                        </DockPanel>
+                        <DockPanel>
+                            <DockPanel DockPanel.Dock="bottom">
+                                <Button Content="Copy to clipboard" HorizontalAlignment="Left" Height="24"  Margin="10,10,0,0" VerticalAlignment="Top" Width="112" Command="{Binding Path=CopyToClipboardCommand}" />
+                            </DockPanel>
+                            <ListBox Margin="10,10,10,10"  ItemsSource="{Binding CardsList}" SelectedItem="{Binding SelectedCard}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding DisplayName}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </DockPanel>
+                    </DockPanel>
                 </DockPanel>
-            </DockPanel>
-        </DockPanel>
-
+            </TabItem>
+            <TabItem Header="Options">
+                <DockPanel>
+                    <DockPanel DockPanel.Dock="Top">
+                        <Label MinWidth="90">Collection: </Label>
+                        <Button Content="📂" HorizontalAlignment="Left" Height="24" Width="24" VerticalAlignment="Top" Command="{Binding Path=OpenCollectionCommand}" />
+                        <TextBox TextWrapping="NoWrap" Text="{Binding Path=CollectionPath}" />
+                    </DockPanel>
+                    <DockPanel DockPanel.Dock="Top">
+                        <Label MinWidth="90">Set:</Label>
+                        <Button Content="📂" HorizontalAlignment="Left" Height="24"  Width="24" VerticalAlignment="Top" Command="{Binding Path=OpenSetCommand}" />
+                        <TextBox TextWrapping="NoWrap" Text="{Binding Path=ExampleCardSetListPath}" />
+                    </DockPanel>
+                    <DockPanel></DockPanel>
+                </DockPanel>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>

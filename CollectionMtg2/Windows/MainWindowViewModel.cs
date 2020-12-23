@@ -34,15 +34,12 @@
         public string SetName { get; set; }
         public string MaxCardInSet { get; set; }
 
-        private const string _programName = "Mtg Connellection Tool";
+        private const string _programName = "Mtg Collection Tool v0.2";
 
         private string _collectionPath;
         public string CollectionPath
         {
-            get
-            {
-                return _collectionPath;
-            }
+            get => _collectionPath;
             set
             {
                 _collectionPath = value;
@@ -51,10 +48,19 @@
                 OnPropertyChanged();
             }
         }
-        public string CollectionSetFilter { get; set; }
-
         private string _cardListPath;
-        public string CardListPath { get => _cardListPath; set { _cardListPath = value;  OnPropertyChanged(); } }
+        public string ExampleCardSetListPath { 
+            get => _cardListPath;
+            set 
+            { 
+                _cardListPath = value;
+                Properties.Settings.Default.CardSetFileName = value;
+                Properties.Settings.Default.Save();
+                OnPropertyChanged(); 
+            }
+        }
+
+        public string CollectionSetFilter { get; set; }
 
         public bool WantPlaysets { get; set; }
 
@@ -71,15 +77,18 @@
         public ICommand CopyToClipboardCommand { get; }
 
         private readonly IQueryDispatcher _queryDispatcher;
+        private readonly ICommandDispatcher _commandDispatcher;
         private readonly IScryfallApiClient _scryfallApiClient;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public MainWindowViewModel(
             IQueryDispatcher queryDispatcher,
+            ICommandDispatcher commandDispatcher,
             IScryfallApiClient scryfallApiClient)
         {
             _queryDispatcher = queryDispatcher;
+            _commandDispatcher = commandDispatcher;
             _scryfallApiClient = scryfallApiClient;
 
             OpenCollectionCommand = new BaseCommand(OpenCollection);
@@ -92,11 +101,12 @@
             CopyToClipboardCommand = new BaseCommand(CopyToClipboard);
 
             WindowTitle = _programName;
+            
+            CollectionPath = Properties.Settings.Default.CardCollectionFileName;
+            ExampleCardSetListPath = Properties.Settings.Default.CardSetFileName;
+            CollectionSetFilter = "Ravnica Allegiance";
             SetName = "RNA";
             MaxCardInSet = "9999";
-            CollectionPath = Properties.Settings.Default.CardCollectionFileName;
-            CollectionSetFilter = "Ravnica Allegiance";
-            CardListPath = @"F:\Projects\ProjectMtg2\setLists\rna.txt";
             DisplayedImagePath = @"https://img.scryfall.com/cards/large/en/gtc/193.jpg?1517813031";
         }
 
@@ -111,11 +121,11 @@
         {
             var openFileDialog = new OpenFileDialog()
             {
-                InitialDirectory = Path.GetDirectoryName(CardListPath)
+                InitialDirectory = string.IsNullOrWhiteSpace(ExampleCardSetListPath) ? null : Path.GetDirectoryName(ExampleCardSetListPath)
             };
             if (openFileDialog.ShowDialog() == true)
             {
-                CardListPath = openFileDialog.FileName;
+                ExampleCardSetListPath = openFileDialog.FileName;
             }
             return Task.CompletedTask;
         }
@@ -148,15 +158,22 @@
                 });
             OutputText = "";
             CardsList.Clear();
-            using (var writer = new StreamWriter(File.Open(CardListPath, FileMode.OpenOrCreate))) {
-                foreach (var card in cards)
-                {
-                    var pos = new Position() { CardType = card, CardCount = 0 };
-                    CardsList.Add(pos);
-                    await writer.WriteLineAsync(card.CardName);
-                }
+            await _commandDispatcher.DispatchAsync(new SaveSetCommand()
+            {
+                Path = GetCurrentSetPath(),
+                CardsToSave = cards
+            });
+            foreach (var c in cards)
+            {
+                CardsList.Add(new Position() { CardType = c, CardCount = 0 });
             }
             WindowTitle = _programName;
+        }
+
+        private string GetCurrentSetPath() {
+            return Path.Combine(
+                new DirectoryInfo(Path.GetDirectoryName(ExampleCardSetListPath)).FullName,
+                SetName + ".txt");
         }
 
         private Task OpenCollection()
@@ -212,7 +229,7 @@
               <GetMissingCardsQuery, CardCollection>(new GetMissingCardsQuery()
               {
                   CollectedCards = collection,
-                  WantedCardsListPath = CardListPath,
+                  WantedCardsListPath = GetCurrentSetPath(),
                   WantPlaysets = WantPlaysets
               });
             var metadata = await _scryfallApiClient.GetCardsFromCollectionAsync(missingCards);

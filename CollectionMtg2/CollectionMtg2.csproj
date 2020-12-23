@@ -83,6 +83,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CQS\Collection\SaveSetCommand.cs" />
     <Compile Include="CQS\Scryfall\GetCardsFromSetQuery.cs" />
     <Compile Include="CQS\Scryfall\Helper\ScryfallCard.cs" />
     <Compile Include="CQS\Scryfall\Helper\ScryfallCardExtensions.cs" />
