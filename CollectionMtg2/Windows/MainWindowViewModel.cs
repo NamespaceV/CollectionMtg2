@@ -24,9 +24,6 @@
         private string _windowTitle;
         public string WindowTitle { get => _windowTitle; set { _windowTitle = value; OnPropertyChanged(); } }
 
-        private string _outputText;
-        public string OutputText { get => _outputText; set { _outputText = value; OnPropertyChanged(); } }
-
         public ObservableCollection<Position> CardsList { get; set; } = new ObservableCollection<Position>();
         private Position _selectedCard;
         public Position SelectedCard { get => _selectedCard; set { _selectedCard = value; OnPropertyChanged(); } }
@@ -138,7 +135,6 @@
                     SetNameAs3Letter = SetName,
                     MaxCardNo = int.Parse(MaxCardInSet)
                 });
-            OutputText = "";
             CardsList.Clear();
             foreach (var card in cards)
             {
@@ -156,7 +152,6 @@
                     SetNameAs3Letter = SetName,
                     MaxCardNo = int.Parse(MaxCardInSet)
                 });
-            OutputText = "";
             CardsList.Clear();
             await _commandDispatcher.DispatchAsync(new SaveSetCommand()
             {
@@ -207,7 +202,6 @@
                 c.CardType.DisplayImage = imageUrl;
             }
 
-            OutputText = "";
             CardsList.Clear();
             foreach (var cardPosition in collection.cardPositions)
             {
@@ -240,7 +234,6 @@
                 c.CardType.DisplayImage = imageUrl;
             }
 
-            OutputText = "";
             CardsList.Clear();
             foreach (var cardPosition in missingCards.cardPositions)
             {
