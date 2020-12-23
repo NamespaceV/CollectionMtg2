@@ -1,6 +1,5 @@
-﻿namespace CollectionMtg2
+﻿namespace CollectionMtg2.Windows
 {
-    using CollectionMtg2.ViewModel;
     using System.Windows;
 
     public partial class MainWindow : Window

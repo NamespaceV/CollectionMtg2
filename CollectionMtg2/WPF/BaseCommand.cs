@@ -1,4 +1,4 @@
-﻿namespace CollectionMtg2.Commands
+﻿namespace CollectionMtg2.WPF
 {
     using System;
     using System.Threading.Tasks;
@@ -46,7 +46,8 @@
             }
         }
 
-        public Task ExecuteAsync() {
+        public Task ExecuteAsync()
+        {
             return ExecuteImpl();
         }
     }

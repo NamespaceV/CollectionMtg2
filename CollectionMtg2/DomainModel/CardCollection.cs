@@ -7,11 +7,12 @@
     {
         public class Position
         {
-            public Card CardType;
-            public int CardCount;
+            public Card CardType { get; set; }
+            public int CardCount { get; set; }
             public string DisplayName => CardCount + " " + CardType.CardName;
             public string DisplayImage => CardType.DisplayImage;
         }
+
         public List<Position> cardPositions = new List<Position>();
 
         public void AddCard(string name, int count)

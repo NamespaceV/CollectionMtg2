@@ -1,11 +1,14 @@
-﻿namespace CollectionMtg2.ViewModel
+﻿namespace CollectionMtg2.Windows
 {
-    using CollectionMtg2.CollectionDiff;
-    using CollectionMtg2.Commands;
-    using CollectionMtg2.Deckbox;
-    using CollectionMtg2.ScryfallApi;
+    using CollectionMtg2.CQS.Collection;
+    using CollectionMtg2.CQS.Core;
+    using CollectionMtg2.CQS.Deckbox;
+    using CollectionMtg2.CQS.Scryfall;
+    using CollectionMtg2.CQS.Scryfall.Helper;
+    using CollectionMtg2.DomainModel;
+    using CollectionMtg2.WPF;
     using Microsoft.Win32;
-    using System;
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.IO;
@@ -67,20 +70,17 @@
 
         public ICommand CopyToClipboardCommand { get; }
 
-        private readonly DeckboxExportParser _deckboxParser;
-        private readonly ScryfallApiClient _scryfallApiClient;
-        private readonly CollectionComparer _collectionComparer;
+        private readonly IQueryDispatcher _queryDispatcher;
+        private readonly IScryfallApiClient _scryfallApiClient;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public MainWindowViewModel(
-            DeckboxExportParser deckboxParser,
-            ScryfallApiClient scryfallApiClient,
-            CollectionComparer collectionComparer)
+            IQueryDispatcher queryDispatcher,
+            IScryfallApiClient scryfallApiClient)
         {
-            _deckboxParser = deckboxParser;
+            _queryDispatcher = queryDispatcher;
             _scryfallApiClient = scryfallApiClient;
-            _collectionComparer = collectionComparer;
 
             OpenCollectionCommand = new BaseCommand(OpenCollection);
             LoadCollectionCommand = new BaseCommand(LoadCollection);
@@ -96,7 +96,7 @@
             MaxCardInSet = "9999";
             CollectionPath = Properties.Settings.Default.CardCollectionFileName;
             CollectionSetFilter = "Ravnica Allegiance";
-            CardListPath = @"F:\ProjectMtg2\setLists\rna.txt";
+            CardListPath = @"F:\Projects\ProjectMtg2\setLists\rna.txt";
             DisplayedImagePath = @"https://img.scryfall.com/cards/large/en/gtc/193.jpg?1517813031";
         }
 
@@ -123,7 +123,11 @@
         private async Task LoadSet()
         {
             WindowTitle += " - Loading Set...";
-            var cards = await _scryfallApiClient.GetCardsFromSet(SetName, int.Parse(MaxCardInSet));
+            var cards = await _queryDispatcher.DispatchAsync<GetCardsFromSetQuery, ICollection<Card>>(
+                new GetCardsFromSetQuery() {
+                    SetNameAs3Letter = SetName,
+                    MaxCardNo = int.Parse(MaxCardInSet)
+                });
             OutputText = "";
             CardsList.Clear();
             foreach (var card in cards)
@@ -137,7 +141,11 @@
         private async Task SaveSet()
         {
             WindowTitle += " - Saving Set...";
-            var cards = await _scryfallApiClient.GetCardsFromSet(SetName, int.Parse(MaxCardInSet));
+            var cards = await _queryDispatcher.DispatchAsync<GetCardsFromSetQuery, ICollection<Card>>(
+                new GetCardsFromSetQuery() {
+                    SetNameAs3Letter = SetName,
+                    MaxCardNo = int.Parse(MaxCardInSet)
+                });
             OutputText = "";
             CardsList.Clear();
             using (var writer = new StreamWriter(File.Open(CardListPath, FileMode.OpenOrCreate))) {
@@ -167,9 +175,21 @@
         private async Task LoadCollection()
         {
             WindowTitle += " - Loading collection...";
-            var collection = await _deckboxParser.ReadCollectionCsv(CollectionPath, CollectionSetFilter);
-            await _scryfallApiClient.LinkImages(collection);
-            //SelectedCard = new Position() { CardType = new Card() { CardName = "dasdas" }, CardCount = 5 };
+            var collection = await _queryDispatcher.DispatchAsync
+                <ReadCollectionCsvQuery, CardCollection> ( new ReadCollectionCsvQuery()
+            {
+                CollectionFilePath = CollectionPath,
+                SetNameFilter = CollectionSetFilter
+            });
+
+            var metadata = await _scryfallApiClient.GetCardsFromCollectionAsync(collection);
+            foreach (var c in collection.cardPositions)
+            {
+                var cardData = metadata.FindMatching(c.CardType);
+                var imageUrl = cardData?.image_uris?.png ?? @"F:\Projects\ProjectMtg2\images\404.png";
+                c.CardType.DisplayImage = imageUrl;
+            }
+
             OutputText = "";
             CardsList.Clear();
             foreach (var cardPosition in collection.cardPositions)
@@ -182,12 +202,30 @@
         private async Task CompareCollectionWithSet()
         {
             WindowTitle += " - Comparing...";
-            var collection = await _deckboxParser.ReadCollectionCsv(CollectionPath, CollectionSetFilter);
-            var missing = await _collectionComparer.GetMissingCards(collection, CardListPath, WantPlaysets);
-            await _scryfallApiClient.LinkImages(missing);
+            var collection = await _queryDispatcher.DispatchAsync
+               <ReadCollectionCsvQuery, CardCollection>(new ReadCollectionCsvQuery()
+               {
+                   CollectionFilePath = CollectionPath,
+                   SetNameFilter = CollectionSetFilter
+               });
+            var missingCards = await _queryDispatcher.DispatchAsync
+              <GetMissingCardsQuery, CardCollection>(new GetMissingCardsQuery()
+              {
+                  CollectedCards = collection,
+                  WantedCardsListPath = CardListPath,
+                  WantPlaysets = WantPlaysets
+              });
+            var metadata = await _scryfallApiClient.GetCardsFromCollectionAsync(missingCards);
+            foreach (var c in missingCards.cardPositions)
+            {
+                var cardData = metadata.FindMatching(c.CardType);
+                var imageUrl = cardData?.image_uris?.png ?? @"F:\Projects\ProjectMtg2\images\404.png";
+                c.CardType.DisplayImage = imageUrl;
+            }
+
             OutputText = "";
             CardsList.Clear();
-            foreach (var cardPosition in missing.cardPositions)
+            foreach (var cardPosition in missingCards.cardPositions)
             {
                 CardsList.Add(cardPosition);
             }

@@ -1,4 +1,4 @@
-﻿namespace CollectionMtg2.ScryfallApi
+﻿namespace CollectionMtg2.CQS.Scryfall
 {
     using CollectionMtg2.DomainModel;
     using Newtonsoft.Json;
@@ -8,40 +8,20 @@
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
 
-    public class ScryfallApiClient
+    public interface IScryfallApiClient
+    {
+        Task<ICollection<ScryfallCard>> GetCardsFromCollectionAsync(CardCollection collection);
+
+        Task<ICollection<ScryfallCard>> GetCardsFromSetAsync(string setNameAs3Letter);
+    }
+
+    public class ScryfallApiClient : IScryfallApiClient
     {
         private readonly HttpClient _httpClient;
 
         public ScryfallApiClient(HttpClient client)
         {
             _httpClient = client;
-        }
-
-        class ScryfallImageUriSet
-        {
-            public string png;
-        }
-
-        class ScryfallCard
-        {
-            public string name;
-            public int collector_number;
-            public string type_line;
-            public ScryfallImageUriSet image_uris;
-
-            public bool IsBasicLand()
-            {
-                return type_line.StartsWith("Basic Land —");
-            }
-
-            public Card ToModelCard()
-            {
-                return new Card()
-                {
-                    CardName = name,
-                    DisplayImage = image_uris.png
-                };
-            }
         }
 
         class ScryfallCardResponce
@@ -51,10 +31,9 @@
             public List<ScryfallCard> data;
         }
 
-        public async Task<ICollection<Card>> GetCardsFromSet(string setShortName, int maxCardNo)
+        public async Task<ICollection<ScryfallCard>> GetCardsFromSetAsync(string setShortName)
         {
-            string uri = @"https://api.scryfall.com/cards/search";
-            uri += $"?q=e%3A{setShortName}";
+            string uri = $"https://api.scryfall.com/cards/search?q=e%3A{setShortName}";
             var allCards = new List<ScryfallCard>();
             var jsonString = await _httpClient.GetStringAsync(uri);
             var response = JsonConvert.DeserializeObject<ScryfallCardResponce>(jsonString);
@@ -66,22 +45,12 @@
                 response = JsonConvert.DeserializeObject<ScryfallCardResponce>(jsonString);
                 allCards.AddRange(response.data);
             }
-            return allCards
-                .Where(c => !c.IsBasicLand() && c.collector_number <= maxCardNo)
-                .Select(c => c.ToModelCard())
-                .ToList();
+            return allCards;
         }
 
-        internal async Task LinkImages(CardCollection collection)
+        public async Task<ICollection<ScryfallCard>> GetCardsFromCollectionAsync(CardCollection collection)
         {
-            //foreach (var c in collection.cardPositions)
-            //{
-            //    c.CardType.DisplayImage = @"F:\ProjectMtg2\images\404.png";
-            //}
-
-
             var allData = new List<ScryfallCard>();
-
             var uniqueNames = collection.cardPositions.Select(cp => cp.CardType.CardName).Distinct();
             var batchStart = 0;
             while (batchStart < uniqueNames.Count())
@@ -90,19 +59,7 @@
                 batchStart += 75;
                 await AskForData(batchNames, allData);
             }
-
-            foreach (var c in collection.cardPositions)
-            {
-                var image = allData
-                    .FirstOrDefault(scryData => scryData.name == c.CardType.CardName)
-                    ?.image_uris.png ?? @"F:\ProjectMtg2\images\404.png";
-                c.CardType.DisplayImage = image;
-            }
-
-            //return Task.CompletedTask;
-
-            //var imageUri = response.data.FirstOrDefault()?.image_uris?.png ?? ;
-
+            return allData;
         }
 
         private async Task AskForData(List<string> cardNames, List<ScryfallCard> allData)

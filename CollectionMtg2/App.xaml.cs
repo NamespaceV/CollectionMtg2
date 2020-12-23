@@ -2,6 +2,7 @@
 namespace CollectionMtg2
 {
     using System.Windows;
+    using CollectionMtg2.Windows;
     using Microsoft.Extensions.DependencyInjection;
 
     public partial class App : Application
