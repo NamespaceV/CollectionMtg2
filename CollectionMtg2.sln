@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2018
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30711.63
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CollectionMtg2", "CollectionMtg2\CollectionMtg2.csproj", "{1B905970-F915-4734-9262-AF6C0B4521E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CollectionTests", "CollectionTests\CollectionTests.csproj", "{ACDCF6ED-27FC-49D7-BC17-190C8E383832}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{1B905970-F915-4734-9262-AF6C0B4521E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B905970-F915-4734-9262-AF6C0B4521E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B905970-F915-4734-9262-AF6C0B4521E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACDCF6ED-27FC-49D7-BC17-190C8E383832}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACDCF6ED-27FC-49D7-BC17-190C8E383832}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACDCF6ED-27FC-49D7-BC17-190C8E383832}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACDCF6ED-27FC-49D7-BC17-190C8E383832}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
